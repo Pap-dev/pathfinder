@@ -7,7 +7,6 @@ from indicators import check_internet_connection, flight_restriction, weather_co
 class Check(object):
 
     def run_check(self, gcs_credentials, connection_string):
-
         preflight_data = {}
 
         internet_connection = check_internet_connection()
