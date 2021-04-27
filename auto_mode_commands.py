@@ -50,9 +50,9 @@ def mav_cmd_nav_loiter_turns(turns, heading_required, radius, xtrack_location, l
 
 def mav_cmd_nav_loiter_time(time, heading_required, radius, xtrack_location, latitude, longitude, altitude):
     """ Loiter at the specified latitude, longitude and altitude for a certain amount of time. 
-    Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). 
-    Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius_direction.
-    If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
+        Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). 
+        Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius_direction.
+        If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
     """
     cmd = Command(
         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
@@ -1125,9 +1125,51 @@ def mav_cmd_payload_control_deploy(operation_mode):
         0, 0, 0, 0, 0, 0)
 
     return cmd
-    
-# def (system_id, gimbal_device_id    id, transmission,):
-#     """ Mount tracks system with specified system ID. Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message. """
+
+def mav_cmd_do_control_video(id, transmission, interval, recording):
+    """ Control onboard camera system. """
+    cmd = Command(
+        0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        mavutil.mavlink.MAV_CMD_DO_CONTROL_VIDEO,
+        0, 0,
+        id,
+        transmission,
+        interval,
+        recording,
+        0, 0, 0)
+
+def mav_cmd_do_set_mission_current(number):
+    """ Set the mission item with sequence number seq as current item. 
+        This means that the MAV will continue to this mission item on the shortest path (not following the mission items in-between). 
+    """
+    cmd = Command(
+        0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        mavutil.mavlink.MAV_CMD_DO_SET_MISSION_CURRENT,
+        0, 0,
+        number,
+        0, 0, 0, 0, 0, 0)
+        
+    return cmd
+
+
+def mav_cmd_component_arm_disarm(arm, force):
+    """ Arms _ Disarms a component """
+    cmd = Command(
+        0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
+        0, 0,
+        arm,
+        force,
+        0, 0, 0, 0, 0)
+        
+    return cmd
+
+# def MAV_CMD_DO_SET_ROI_SYSID(system_id, gimbal_device_id    id, transmission,):
+#     """ Mount tracks system with specified system ID. 
+#         Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. 
+#         This command can be sent to a gimbal manager but not to a gimbal device. 
+#         A gimbal device is not to react to this message.
+#     """
 #     cmd = Command(
 #         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
 #         mavutil.mavlink.,
@@ -1199,19 +1241,6 @@ def mav_cmd_payload_control_deploy(operation_mode):
 
     # return cmd
 
-    # "def mav_cmd_do_control_video(id, transmission, interval, recording, 0, 0, 0):
-    # """ Control onboard camera system. """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.MAV_CMD_DO_CONTROL_VIDEO,
-    #     0, 0,
-    #     id,
-    #     transmission,
-    #     interval,
-    #     recording,
-    #     0,
-    #     0,
-    #     0)
 
     # return cmd
 
@@ -1290,20 +1319,6 @@ def mav_cmd_payload_control_deploy(operation_mode):
 
     # return cmd
 
-    # "def mav_cmd_do_set_mission_current(number, 0, 0, 0, 0, 0, 0,):
-    # """ Set the mission item with sequence number seq as current item. This means that the MAV will continue to this mission item on the shortest path (not following the mission items in-between). """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.MAV_CMD_DO_SET_MISSION_CURRENT,
-    #     0, 0,
-    #     number,
-    #     0,
-    #     0,
-    #     0,
-    #     0,
-    #     0,
-    #     0,
-            # return cmd
             # "def mav_cmd_do_last():
     # """ NOP - This command is only used to mark the upper limit of the DO commands in the enumeration """
     # cmd = Command(
@@ -1341,19 +1356,8 @@ def mav_cmd_payload_control_deploy(operation_mode):
     #     pitch_angle,
     #     0)
 
-    # return cmd
+    return cmd
 
-
-#     "def mav_cmd_component_arm_disarm(arm, force     ):
-#     """ Arms _ Disarms a component """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
-#         0, 0,
-#         arm,
-#         force)
-
-#     return cmd
 
 
 
