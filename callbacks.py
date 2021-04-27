@@ -1,4 +1,3 @@
-#try
 def wildcard_callback(self, attr_name, value):
     return attr_name, value
 
