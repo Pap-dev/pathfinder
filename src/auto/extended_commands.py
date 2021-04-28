@@ -19,7 +19,7 @@ def mav_cmd_nav_waypoint(hold, accept_radius, pass_radius, yaw, latitude, longit
 
 	return cmd
 
-def mav_cmd_nav_loiter_unlim(, radius, yaw, latitude, longitude, altitude):
+def mav_cmd_nav_loiter_unlim(radius, yaw, latitude, longitude, altitude):
 	""" Loiter around this waypoint an unlimited amount of time
 	"""
 
@@ -326,7 +326,7 @@ def mav_cmd_nav_spline_waypoint(hold, latitude_x, longitude_y, altitude_z):
 
 	return cmd
 
-def mav_cmd_nav_vtol_takeoff(, transition_heading, yaw_angle, latitude, longitude, altitude):
+def mav_cmd_nav_vtol_takeoff(transition_heading, yaw_angle, latitude, longitude, altitude):
 	""" Takeoff from ground using VTOL mode, and transition to forward flight with specified heading. The command should be ignored by vehicles that dont support both VTOL and fixed-wing flight (multicopters, boats,etc.).
 	"""
 
@@ -344,7 +344,7 @@ def mav_cmd_nav_vtol_takeoff(, transition_heading, yaw_angle, latitude, longitud
 
 	return cmd
 
-def mav_cmd_nav_vtol_land(, approach_altitude, yaw, latitude, longitude, ground_altitude):
+def mav_cmd_nav_vtol_land(approach_altitude, yaw, latitude, longitude, ground_altitude):
 	""" Land using VTOL mode
 	"""
 
@@ -740,7 +740,7 @@ def mav_cmd_do_set_actuator(actuator_1, actuator_2, actuator_3, actuator_4, actu
 
 	return cmd
 
-def mav_cmd_do_land_start(, latitude, longitude):
+def mav_cmd_do_land_start(latitude, longitude):
 	""" Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts. It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used. The Latitude/Longitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.
 	"""
 
@@ -956,7 +956,7 @@ def mav_cmd_do_set_roi(roi_mode, wp_index, roi_index):
 
 	return cmd
 
-def mav_cmd_do_digicam_configure(mode, shutter_speed, aperture, iso, exposure, command_identity, engine_cut-off):
+def mav_cmd_do_digicam_configure(mode, shutter_speed, aperture, iso, exposure, command_identity, engine_cutoff):
 	""" Configure digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).
 	"""
 
@@ -970,7 +970,7 @@ def mav_cmd_do_digicam_configure(mode, shutter_speed, aperture, iso, exposure, c
 		iso, # ISO number e.g. 80, 100, 200, Etc.
 		exposure, # Exposure type enumerator.
 		command_identity, # Command Identity.
-		engine_cut-off) # Main engine cut-off time before camera trigger. (0 means no cut-off)
+		engine_cutoff) # Main engine cut-off time before camera trigger. (0 means no cut-off)
 
 	return cmd
 
@@ -1229,7 +1229,7 @@ def mav_cmd_do_guided_master(system_id, component_id):
 
 	return cmd
 
-def mav_cmd_do_guided_limits(timeout, min_altitude, max_altitude, horiz._move_limit):
+def mav_cmd_do_guided_limits(timeout, min_altitude, max_altitude, horizontal_move_limit):
 	""" Set limits for external control
 	"""
 
@@ -1240,7 +1240,7 @@ def mav_cmd_do_guided_limits(timeout, min_altitude, max_altitude, horiz._move_li
 		timeout, # Timeout - maximum time that external controller will be allowed to control vehicle. 0 means no timeout.
 		min_altitude, # Altitude (MSL) min - if vehicle moves below this alt, the command will be aborted and the mission will continue. 0 means no lower altitude limit.
 		max_altitude, # Altitude (MSL) max - if vehicle moves above this alt, the command will be aborted and the mission will continue. 0 means no upper altitude limit.
-		horiz._move_limit, # Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.
+		horizontal_move_limit, # Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.
 		0,
 		0,
 		0)
@@ -1760,7 +1760,7 @@ def mav_cmd_reset_camera_settings(reset):
 
 	return cmd
 
-def mav_cmd_set_camera_mode(, camera_mode):
+def mav_cmd_set_camera_mode(camera_mode):
 	""" Set camera running mode. Use NaN for reserved values. GCS will send a MAV_CMD_REQUEST_VIDEO_STREAM_STATUS command after a mode change if the camera supports video streaming.
 	"""
 
@@ -1876,6 +1876,7 @@ def mav_cmd_do_gimbal_manager_pitchyaw(pitch_angle, yaw_angle, pitch_rate, yaw_r
 		yaw_rate, # Yaw rate (positive to yaw to the right).
 		gimbal_manager_flags, # Gimbal manager flags to use.
 		gimbal_device_id, # Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
+		0)
 
 	return cmd
 
@@ -1896,7 +1897,7 @@ def mav_cmd_do_gimbal_manager_configure(sysid_primary_control, compid_primary_co
 
 	return cmd
 
-def mav_cmd_image_start_capture(, interval, total_images, sequence_number):
+def mav_cmd_image_start_capture(interval, total_images, sequence_number):
 	""" Start image capture sequence. Sends CAMERA_IMAGE_CAPTURED after each capture. Use NaN for reserved values.
 	"""
 
@@ -2280,6 +2281,7 @@ def mav_cmd_set_guided_submode_circle(radius, latitude, longitude):
 		0,
 		latitude, # Target latitude of center of circle in CIRCLE_MODE
 		longitude, # Target longitude of center of circle in CIRCLE_MODE
+		0)
 
 	return cmd
 
@@ -2301,7 +2303,7 @@ def mav_cmd_condition_gate(geometry, usealtitude, latitude, longitude, altitude)
 
 	return cmd
 
-def mav_cmd_nav_fence_return_point(, latitude, longitude, altitude):
+def mav_cmd_nav_fence_return_point(latitude, longitude, altitude):
 	""" Fence return point (there can only be one such point in a geofence definition). If rally points are supported they should be used instead.
 	"""
 
@@ -2395,7 +2397,7 @@ def mav_cmd_nav_fence_circle_exclusion(radius, latitude, longitude):
 
 	return cmd
 
-def mav_cmd_nav_rally_point(, latitude, longitude, altitude):
+def mav_cmd_nav_rally_point(latitude, longitude, altitude):
 	""" Rally point. You can have multiple rally points defined.
         
 	"""
@@ -2504,7 +2506,7 @@ def mav_cmd_do_winch(instance, action, length, rate):
 
 	return cmd
 
-def mav_cmd_waypoint_user_1(, latitude, longitude, altitude):
+def mav_cmd_waypoint_user_1(latitude, longitude, altitude):
 	""" User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	"""
 
@@ -2522,7 +2524,7 @@ def mav_cmd_waypoint_user_1(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_waypoint_user_2(, latitude, longitude, altitude):
+def mav_cmd_waypoint_user_2(latitude, longitude, altitude):
 	""" User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	"""
 
@@ -2540,7 +2542,7 @@ def mav_cmd_waypoint_user_2(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_waypoint_user_3(, latitude, longitude, altitude):
+def mav_cmd_waypoint_user_3(latitude, longitude, altitude):
 	""" User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	"""
 
@@ -2558,7 +2560,7 @@ def mav_cmd_waypoint_user_3(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_waypoint_user_4(, latitude, longitude, altitude):
+def mav_cmd_waypoint_user_4(latitude, longitude, altitude):
 	""" User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	"""
 
@@ -2576,7 +2578,7 @@ def mav_cmd_waypoint_user_4(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_waypoint_user_5(, latitude, longitude, altitude):
+def mav_cmd_waypoint_user_5(latitude, longitude, altitude):
 	""" User defined waypoint item. Ground Station will show the Vehicle as flying through this item.
 	"""
 
@@ -2594,7 +2596,7 @@ def mav_cmd_waypoint_user_5(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_spatial_user_1(, latitude, longitude, altitude):
+def mav_cmd_spatial_user_1(latitude, longitude, altitude):
 	""" User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item.
 	"""
 
@@ -2612,7 +2614,7 @@ def mav_cmd_spatial_user_1(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_spatial_user_2(, latitude, longitude, altitude):
+def mav_cmd_spatial_user_2(latitude, longitude, altitude):
 	""" User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item.
 	"""
 
@@ -2630,7 +2632,7 @@ def mav_cmd_spatial_user_2(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_spatial_user_3(, latitude, longitude, altitude):
+def mav_cmd_spatial_user_3(latitude, longitude, altitude):
 	""" User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item.
 	"""
 
@@ -2648,7 +2650,7 @@ def mav_cmd_spatial_user_3(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_spatial_user_4(, latitude, longitude, altitude):
+def mav_cmd_spatial_user_4(latitude, longitude, altitude):
 	""" User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item.
 	"""
 
@@ -2666,7 +2668,7 @@ def mav_cmd_spatial_user_4(, latitude, longitude, altitude):
 
 	return cmd
 
-def mav_cmd_spatial_user_5(, latitude, longitude, altitude):
+def mav_cmd_spatial_user_5(latitude, longitude, altitude):
 	""" User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item.
 	"""
 

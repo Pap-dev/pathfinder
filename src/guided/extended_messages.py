@@ -955,7 +955,7 @@ def mav_cmd_do_set_roi(self, roi_mode, wp_index, roi_index):
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_do_digicam_configure(self, mode, shutter_speed, aperture, iso, exposure, command_identity, engine_cut-off):
+def mav_cmd_do_digicam_configure(self, mode, shutter_speed, aperture, iso, exposure, command_identity, engine_cutoff):
 	""" Configure digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).
 	"""
 
@@ -969,7 +969,7 @@ def mav_cmd_do_digicam_configure(self, mode, shutter_speed, aperture, iso, expos
 		iso, # ISO number e.g. 80, 100, 200, Etc.
 		exposure, # Exposure type enumerator.
 		command_identity, # Command Identity.
-		engine_cut-off) # Main engine cut-off time before camera trigger. (0 means no cut-off)
+		engine_cutoff) # Main engine cut-off time before camera trigger. (0 means no cut-off)
 
 	self.vehicle.send_mavlink(msg)
 
@@ -1228,7 +1228,7 @@ def mav_cmd_do_guided_master(self, system_id, component_id):
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_do_guided_limits(self, timeout, min_altitude, max_altitude, horiz._move_limit):
+def mav_cmd_do_guided_limits(self, timeout, min_altitude, max_altitude, horizontal_move_limit):
 	""" Set limits for external control
 	"""
 
@@ -1239,7 +1239,7 @@ def mav_cmd_do_guided_limits(self, timeout, min_altitude, max_altitude, horiz._m
 		timeout, # Timeout - maximum time that external controller will be allowed to control vehicle. 0 means no timeout.
 		min_altitude, # Altitude (MSL) min - if vehicle moves below this alt, the command will be aborted and the mission will continue. 0 means no lower altitude limit.
 		max_altitude, # Altitude (MSL) max - if vehicle moves above this alt, the command will be aborted and the mission will continue. 0 means no upper altitude limit.
-		horiz._move_limit, # Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.
+		horizontal_move_limit, # Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.
 		0,
 		0,
 		0)
@@ -1261,7 +1261,6 @@ def mav_cmd_do_engine_control(self, start_engine, cold_start, height_delay):
 		0,
 		0,
 		0)
-		0,
 
 	self.vehicle.send_mavlink(msg)
 
@@ -1280,7 +1279,6 @@ def mav_cmd_do_set_mission_current(self, number):
 		0,
 		0,
 		0)
-		0,
 
 	self.vehicle.send_mavlink(msg)
 
@@ -1320,7 +1318,7 @@ def mav_cmd_preflight_calibration(self, gyro_temperature, magnetometer, ground_p
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_preflight_set_sensor_offsets(self, sensor_type, x_offset, y_offset, z_offset, 4th_dimension, 5th_dimension, 6th_dimension):
+def mav_cmd_preflight_set_sensor_offsets(self, sensor_type, x_offset, y_offset, z_offset, fourth_dimension, fifth_dimension, sixth_dimension):
 	""" Set sensor offsets. This command will be only accepted if in pre-flight mode.
 	"""
 
@@ -1332,9 +1330,9 @@ def mav_cmd_preflight_set_sensor_offsets(self, sensor_type, x_offset, y_offset, 
 		x_offset, # X axis offset (or generic dimension 1), in the sensor's raw units
 		y_offset, # Y axis offset (or generic dimension 2), in the sensor's raw units
 		z_offset, # Z axis offset (or generic dimension 3), in the sensor's raw units
-		4th_dimension, # Generic dimension 4, in the sensor's raw units
-		5th_dimension, # Generic dimension 5, in the sensor's raw units
-		6th_dimension) # Generic dimension 6, in the sensor's raw units
+		fourth_dimension, # Generic dimension 4, in the sensor's raw units
+		fifth_dimension, # Generic dimension 5, in the sensor's raw units
+		sixth_dimension) # Generic dimension 6, in the sensor's raw units
 
 	self.vehicle.send_mavlink(msg)
 
@@ -1877,6 +1875,7 @@ def mav_cmd_do_gimbal_manager_pitchyaw(self, pitch_angle, yaw_angle, pitch_rate,
 		yaw_rate, # Yaw rate (positive to yaw to the right).
 		gimbal_manager_flags, # Gimbal manager flags to use.
 		gimbal_device_id, # Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).
+		0)
 
 	self.vehicle.send_mavlink(msg)
 
@@ -2281,7 +2280,8 @@ def mav_cmd_set_guided_submode_circle(self, radius, latitude, longitude):
 		0,
 		latitude, # Target latitude of center of circle in CIRCLE_MODE
 		longitude, # Target longitude of center of circle in CIRCLE_MODE
-
+		0)
+		
 	self.vehicle.send_mavlink(msg)
 
 def mav_cmd_condition_gate(self, geometry, usealtitude, latitude, longitude, altitude):
