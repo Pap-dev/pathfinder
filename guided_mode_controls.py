@@ -300,17 +300,14 @@ class Controller():
         if not gamepad:
             gamepad = inputs.devices.gamepads[0]
 
-        # Vibrate left
-        gamepad.set_vibration(1, 0, 1000)
-
-        time.sleep(2)
-
-        # Vibrate right
-        gamepad.set_vibration(0, 1, 1000)
-        time.sleep(2)
+        # # Vibrate left
+        # gamepad.set_vibration(1, 0, 1000)
+        # # Vibrate right
+        # gamepad.set_vibration(0, 1, 1000)
 
         # Vibrate Both
         gamepad.set_vibration(1, 1, 2000)
+        
         time.sleep(2)
 
     def get_gamepad_inputs(self, event):

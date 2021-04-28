@@ -33,9 +33,11 @@ def run_callback_listener(self):
             if attribute != attribute_name:
                 continue
             
-            attribute_name[attribute] = value
+            vehicle_attributes[attribute_name] = value
+
+        alerts = self.analyze_callbacks(vehicle_attributes)
     
-    return attribute_name
-            
+    return alerts, vehicle_attributes
+
 def stop_callback_listener(self):
     self.vehicle.remove_attribute_listener('*', wildcard_callback)

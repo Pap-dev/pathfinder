@@ -94,7 +94,7 @@ def mav_cmd_nav_land(abort_alt, land_mode, yaw_angle, latitude, longitude, altit
     return cmd
 
 def mav_cmd_nav_takeoff(pitch, yaw, latitude, longitude, altitude):
-    """ Takeoff from ground _ hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode. """
+    """ Takeoff from ground / hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode. """
     cmd = Command(
         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
         mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
@@ -1138,6 +1138,8 @@ def mav_cmd_do_control_video(id, transmission, interval, recording):
         recording,
         0, 0, 0)
 
+    return cmd
+
 def mav_cmd_do_set_mission_current(number):
     """ Set the mission item with sequence number seq as current item. 
         This means that the MAV will continue to this mission item on the shortest path (not following the mission items in-between). 
@@ -1151,9 +1153,8 @@ def mav_cmd_do_set_mission_current(number):
         
     return cmd
 
-
 def mav_cmd_component_arm_disarm(arm, force):
-    """ Arms _ Disarms a component """
+    """ Arms / Disarms a component """
     cmd = Command(
         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
         mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
@@ -1164,67 +1165,49 @@ def mav_cmd_component_arm_disarm(arm, force):
         
     return cmd
 
-# def MAV_CMD_DO_SET_ROI_SYSID(system_id, gimbal_device_id    id, transmission,):
-#     """ Mount tracks system with specified system ID. 
-#         Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. 
-#         This command can be sent to a gimbal manager but not to a gimbal device. 
-#         A gimbal device is not to react to this message.
-#     """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         system_id,
-#         gimbal_device_id)id,
-#         transmission,
-
-#     return cmd
-
-    # """ Start orbiting on the circumference of a circle defined by the parameters. Setting any value NaN results in using defaults. """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     radius,
-    #     velocity,
-    #     yaw_behavior,
-    #     0,
-    #     latitude_x,
-    #     longitude_y,
-    #     altitude_z)
-
-    # return cmd
-
-    # """ Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     roi_mode,
-    #     wp_index,
-    #     roi_index,
-    #     0,
-    #     x,
-    #     y,
-    #     z)
-
-    # return cmd
+def mav_cmd_do_set_roi_sysid(system_id, gimbal_device_id):
+    """ Mount tracks system with specified system ID. 
+        Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. 
+        This command can be sent to a gimbal manager but not to a gimbal device. 
+        A gimbal device is not to react to this message.
+    """
+    cmd = Command(
+        0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        mavutil.mavlink.MAV_CMD_DO_SET_ROI_SYSID,
+        0, 0,
+        system_id,
+        gimbal_device_id,
+        0, 0, 0, 0, 0)
     
-    # "
-    # """ hand control over to an external controller """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.MAV_CMD_NAV_GUIDED_ENABLE,
-    #     0, 0,
-    #     enable,
-    #     0,
-    #     0,
-    #     0,
-    #     0,
-    #     0,
-    #     0)
+    return cmd
 
-    # return cmd
+def mav_cmd_do_orbit(radius, velocity, yaw_behavior, latitude_x, longitude_y, altitude_z):
+    """ Start orbiting on the circumference of a circle defined by the parameters. Setting any value NaN results in using defaults. """
+    cmd = Command(
+        0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        mavutil.mavlink.MAV_CMD_DO_ORBIT,
+        0, 0,
+        radius,
+        velocity,
+        yaw_behavior,
+        0,
+        latitude_x,
+        longitude_y,
+        altitude_z)
+
+    return cmd
+
+def mav_cmd_nav_guided_enable(enable):
+    """ hand control over to an external controller """
+    cmd = Command(
+        0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        mavutil.mavlink.MAV_CMD_NAV_GUIDED_ENABLE,
+        0, 0,
+        enable,
+        0, 0, 0, 0, 0, 0) 
+
+    return cmd
+
     # "
     # """ Sets actuators (e.g. servos) to a desired value. The actuator numbers are mapped to specific outputs (e.g. on any MAIN or AUX PWM or UAVCAN) using a flight-stack specific mechanism (i.e. a parameter). """
     # cmd = Command(
@@ -1271,53 +1254,6 @@ def mav_cmd_component_arm_disarm(arm, force):
 
     # return cmd
 
-
-    # """ Mission command to configure a camera or antenna mount """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     mode,
-    #     stabilize_roll,
-    #     stabilize_pitch,
-    #     stabilize_yaw,
-    #     roll_input_mode,
-    #     pitch_input_mode,
-    #     yaw_input_mode)
-
-    # return cmd
-    # "
-    # """ Mission command to control a camera or antenna mount """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     pitch,
-    #     roll,
-    #     yaw,
-    #     altitude,
-    #     latitude,
-    #     longitude,
-    #     mode)
-
-    # return cmd
-
-
-    # "
-    # """ Mission command to control a camera or antenna mount, using a quaternion as reference. """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     q1,
-    #     q2,
-    #     q3,
-    #     q4,
-    #     0,
-    #     0,
-    #     0)
-
-    # return cmd
 
             # "def mav_cmd_do_last():
     # """ NOP - This command is only used to mark the upper limit of the DO commands in the enumeration """
@@ -1478,94 +1414,6 @@ def mav_cmd_component_arm_disarm(arm, force):
 
 
 
-
-
-
-
-
-
-
-#     "
-#     """ Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         protocol,
-#         0)version,
-        
-
-#     return cmd
-
-
-
-
-
-#     "
-#     """ Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         version,
-#         0)capabilities,
-        
-
-#     return cmd
-
-
-
-
-
-#     "
-#     """ Request camera information (CAMERA_INFORMATION). """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         capabilities,
-#         0)settings,
-        
-
-#     return cmd
-
-
-
-
-
-#     "
-#     """ Request camera settings (CAMERA_SETTINGS). """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         settings,
-#         0)storage_id,
-        
-
-#     return cmd
-
-
-
-
-
-#     "
-#     """ Request storage information (STORAGE_INFORMATION). Use the command's target_component to target a specific component's storage. """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         storage_id,
-#         information,
-#         0)storage_id,
-        
-
-#     return cmd
-
-
-
-
-
 #     "def mav_cmd_storage_format(storage_id, format, reset_image_log, 0   ):
 #     """ Format a storage medium. Once format is complete, a STORAGE_INFORMATION message is sent. Use the command's target_component to target a specific component's storage. """
 #     cmd = Command(
@@ -1576,24 +1424,6 @@ def mav_cmd_component_arm_disarm(arm, force):
 #         format,
 #         reset_image_log,
 #         0)
-
-#     return cmd
-
-
-
-
-
-
-
-#     "
-#     """ Request camera capture status (CAMERA_CAPTURE_STATUS) """
-#     cmd = Command(
-#         0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-#         mavutil.mavlink.,
-#         0, 0,
-#         capture_status,
-#         0)flight_information,
-        
 
 #     return cmd
 
@@ -1865,27 +1695,6 @@ def mav_cmd_component_arm_disarm(arm, force):
 
 #     return cmd
 
-    # "
-    # """ Request video stream information (VIDEO_STREAM_INFORMATION) """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     stream_id)stream_id)
-
-    # return cmd
-
-    # "
-    # """ Request video stream status (VIDEO_STREAM_STATUS) """
-    # cmd = Command(
-    #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-    #     mavutil.mavlink.,
-    #     0, 0,
-    #     stream_id)format,
-    #     0,
-    #     0,
-        
-
     # return cmd
 
     # "cmd = Command(
@@ -2030,7 +1839,7 @@ def mav_cmd_component_arm_disarm(arm, force):
     # return cmd
 
     # "
-    # """ Deploy payload on a Lat _ Lon _ Alt position. This includes the navigation to reach the required release position and velocity. """
+    # """ Deploy payload on a Lat / Lon / Alt position. This includes the navigation to reach the required release position and velocity. """
     # cmd = Command(
     #     0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
     #     mavutil.mavlink.MAV_CMD_PAYLOAD_PREPARE_DEPLOY,
