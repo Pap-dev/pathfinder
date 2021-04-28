@@ -1,2 +1,1 @@
-PathFinder Precision DroneWare
-Intuitive, ergonomic and Crossplatform GCS for UAV
+PathFinder Precision DroneWare : Intuitive, ergonomic and Crossplatform GCS for UAV
