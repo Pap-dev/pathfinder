@@ -1,7 +1,7 @@
-from dronekit import connect
-from inputs import get_gamepad
 from pymavlink import mavutil
 from callbacks import run_callback_listener
+import time
+import inputs
 
 class VehicleCommands(object):
 
@@ -199,7 +199,7 @@ class Controller():
         self.send_directions(all_keys)
         self.send_yaw(all_keys)
         self.send_mount_controls(all_keys)
-        self.send_cam_controls(all_keys)
+        self.send_cam_controls(all_keys, preferences)
         self.send_gripper_controls(all_keys)
 
     def send_gripper_controls(self, all_keys):
@@ -220,7 +220,7 @@ class Controller():
         self.gripper_control(cargo_release)
         self.winch_control(2, winch_release_rate)
 
-    def send_cam_controls(self, all_keys):
+    def send_cam_controls(self, all_keys, preferences):
         cam_off = all_keys.get('incremental_keys',{}).get('Absolute ABS_HAT0X') 
 
         if cam_off == 0:
@@ -296,62 +296,26 @@ class Controller():
             value = 0
         return value
 
+    def vibrate(gamepad=None):
+        if not gamepad:
+            gamepad = inputs.devices.gamepads[0]
+
+        # Vibrate left
+        gamepad.set_vibration(1, 0, 1000)
+
+        time.sleep(2)
+
+        # Vibrate right
+        gamepad.set_vibration(0, 1, 1000)
+        time.sleep(2)
+
+        # Vibrate Both
+        gamepad.set_vibration(1, 1, 2000)
+        time.sleep(2)
+
     def get_gamepad_inputs(self, event):
         key = event.code
         value = event.state
         type = event.type
 
         return key, value, type
-
-while 1:
-
-    all_keys = {
-        'precision_values' : {
-            'Absolute ABS_X' : 0, # LS X-axis 
-            'Absolute ABS_Y' : 0, # LS Y-axis 
-            },
-        'trigger_values' : {
-            'Absolute ABS_Z' : 0, # LT
-            'Absolute ABS_RZ' : 0 # RT
-            },
-        'altitude_values' : {
-            'Key BTN_TR' : 0, # RB
-            'Key BTN_TL 1' : 0 # LB
-            },
-        'angular_values' : {
-            'Absolute ABS_RY' : 0, # RS Y-axis 
-            'Absolute ABS_RX' : 0, # RS X-axis 
-            },
-        'boolean_values' : {
-            'Key BTN_THUMBL' : 0, # LS press
-            'Key BTN_START 1' : 0, # SELECT
-            'Key BTN_SELECT' : 0, # START
-            'Key BTN_THUMBR' : 0, # RS press
-            'Key BTN_WEST' : 0, # X
-            'Key BTN_SOUTH' : 0, # A
-            'Key BTN_EAST' : 0, # B
-            'Key BTN_NORTH' : 0 # Y
-            },
-        'incremental_keys' : {        
-            'Absolute ABS_HAT0X' : 0, # DPAD X-axis
-            'Absolute ABS_HAT0Y' : 0 # DPAD Y-axis
-            }
-    }
-
-    preferences = {
-        'camera_mode' : 'photo',
-        'parachute_setting' : 'enable auto-release',
-        'landing_mode': 'normal landing'
-    } #default preferences
-
-    events = get_gamepad()
-
-    for event in events:
-        gcs_gamepad = Controller()
-        input_name, input_value, input_type = gcs_gamepad.get_gamepad_inputs(event)
-
-        for nested_dict in all_keys.items():
-            nested_dict.update((key, input_value) for key in nested_dict.items() \
-                if key == input_name)
-
-        gcs_gamepad.send_inputs(all_keys, preferences)
