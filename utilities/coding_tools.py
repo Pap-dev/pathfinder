@@ -4,7 +4,7 @@ import urllib.request
 import os
 
 def generate_commands():
-    """ Turns mavlink's common.xml MAV_CMD into python functions
+    """ Turns mavlink's common.xml MAV_CMD into python functions for commands
         Errors in the output files may originate in common.xml eg: parameter n°x appears mutliple times
     """
 
@@ -100,7 +100,7 @@ def generate_commands():
         file.write(output_functions)
 
 def generate_messages():
-    """ Turns mavlink's common.xml MAV_CMD into python functions
+    """ Turns mavlink's common.xml MAV_CMD into python functions for messages
         Errors in the output files may originate in common.xml eg: parameter n°x appears mutliple times
     """
 

@@ -1,5 +1,4 @@
 from pymavlink import mavutil
-from callbacks import run_callback_listener
 import time
 import inputs
 
