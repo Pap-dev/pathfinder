@@ -1,4 +1,3 @@
-import pandas as pd
 from pymavlink import mavutil
 
 autopilot_generic = mavutil.mavlink.MAV_AUTOPILOT_GENERIC

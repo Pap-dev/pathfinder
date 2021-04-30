@@ -99,7 +99,35 @@ def generate_commands():
     with open(path + '/generated_commands_' + d1 + '.py', 'w') as file:
         file.write(output_functions)
 
-def generate_messages():
+def create_msg_id():
+    url = 'https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/common.xml'
+    response = urllib.request.urlopen(url)
+    tree = ET.parse(response)
+
+    root = tree.getroot()
+    
+    output_line = ''
+    output_lines = ''
+
+    for messages in root.iter('messages'):
+        for message in messages.iter('message'):
+            id = message.get('id')
+            name = message.get('name')
+            description = message.find('description').text
+
+            output_line = name + ' = ' + id + ' # ' + description.replace("\n", " ") + '\n'
+            output_lines += output_line
+
+    directory = os.path.dirname(__file__)
+    path = r'{}/'.format(directory)
+
+    today = date.today()
+    d1 = today.strftime("%d_%m_%Y")
+
+    with open(path + '/messages' + d1 + '.py', 'w') as file:
+        file.write(output_lines)
+
+def guided_mode_commands():
     """ Turns mavlink's common.xml MAV_CMD into python functions for messages
         Errors in the output files may originate in common.xml eg: parameter n°x appears mutliple times
     """
@@ -252,7 +280,7 @@ def generate_minimal():
     """
 
     output_line = ''
-    output_lines = 'import pandas as pd' + '\n' + 'from pymavlink import mavutil' + "\n\n"
+    output_lines = 'from pymavlink import mavutil' + "\n\n"
     enum_name = ''
     
     url = 'https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/minimal.xml'
@@ -309,11 +337,12 @@ def generate_minimal():
         file.write(output_lines)
     pass
 
-def update_mavlink_msg_cmd():
-    # generate_messages()
+def update_mavlink_data():
+    # guided_mode_commands()
     # generate_commands()
     # generate_enums_init()
-    generate_minimal()
+    # generate_minimal()
+    create_msg_id()
 
 if __name__ == "__main__":
-    update_mavlink_msg_cmd()
+    update_mavlink_data()
