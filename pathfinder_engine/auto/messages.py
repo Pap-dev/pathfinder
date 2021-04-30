@@ -86,7 +86,7 @@ class SendMessages():
     FILE_TRANSFER_PROTOCOL = 110 # File transfer message
     TIMESYNC = 111 # Time synchronization message.
     CAMERA_TRIGGER = 112 # Camera-IMU triggering and synchronisation message.
-    HIL_GPS = 113 # The global position, as returned by the Global Positioning System (GPS). This is                  NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
+    HIL_GPS = 113 # The global position, as returned by the Global Positioning System (GPS). This is NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
     HIL_OPTICAL_FLOW = 114 # Simulated optical flow from a flow sensor (e.g. PX4FLOW or optical mouse sensor)
     HIL_STATE_QUATERNION = 115 # Sent from simulation to autopilot, avoids in contrast to HIL_STATE singularities. This packet is useful for high throughput applications such as hardware in the loop simulations.
     SCALED_IMU2 = 116 # The RAW IMU readings for secondary 9DOF sensor setup. This message should contain the scaled values to the described units
