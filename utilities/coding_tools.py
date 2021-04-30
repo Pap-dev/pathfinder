@@ -338,10 +338,10 @@ def generate_minimal():
     pass
 
 def update_mavlink_data():
-    # guided_mode_commands()
-    # generate_commands()
-    # generate_enums_init()
-    # generate_minimal()
+    guided_mode_commands()
+    generate_commands()
+    generate_enums_init()
+    generate_minimal()
     create_msg_id()
 
 if __name__ == "__main__":
