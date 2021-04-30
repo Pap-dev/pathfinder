@@ -48,7 +48,7 @@ def generate_commands():
                             else:
                                 labels += '\t\t0,\n'
 
-                        elif label == "NaN":
+                        elif label == "NaN": # TODO: if NaN no value at all !!!
                             if count_param == 6:
                                 labels += '\t\tNaN)\n'
                             else:
@@ -143,7 +143,7 @@ def generate_messages():
                             else:
                                 labels += '\t\t0,\n'
 
-                        elif label == "NaN":
+                        elif label == "NaN": # TODO: if NaN no value at all !!!
                             if count_param == 6:
                                 labels += '\t\tNaN)\n'
                             else:
@@ -191,9 +191,129 @@ def generate_messages():
     with open(path + '/generated_messages_' + d1 + '.py', 'w') as file:
         file.write(output_functions)
 
+def generate_enums_init():
+    """ Turns mavlink's common.xml enums into python functions to initiate
+    """
+
+    output_line = ''
+    output_lines = 'from pymavlink import mavutil' + "\n\n"
+    enum_name = ''
+    
+    url = 'https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/common.xml'
+    response = urllib.request.urlopen(url)
+    tree = ET.parse(response)
+
+    root = tree.getroot()
+
+    for enums in root.iter('enums'):
+        for enum in enums.iter('enum'):
+            if enum.get('name') != 'MAV_CMD':
+                enum_name = enum.get('name')
+                output_line = enum_name.lower() + ' = mavutil.mavlink.' + enum_name + '\n'
+                possible_entries = ''
+                for entry in enum.iter('entry'):
+                    deprecated = entry.find('deprecated')
+                    deprecation_comment = ''
+
+                    if deprecated is not None:
+                        for deprecta in entry.iter('deprecated'):
+                            deprecation_comment = '# Deprecated since ' + deprecta.get('since') + \
+                                ' and replaced by ' + deprecta.get('replaced_by') + '\n'
+
+                    name = entry.get('name')
+                    value = entry.get('value')
+                    
+                    if entry.find('description') is None:
+                        description = ''
+                    else:
+                        description = entry.find('description').text
+
+                        if description is None:
+                            description = ''
+                    
+                    possible_entries += '# name: ' + name + '\n# value: ' + str(value) + '\n# description: ' + description + '\n\n'
+
+                output_line = output_line + deprecation_comment + \
+                    possible_entries + ' \n'
+                    
+            output_lines += output_line
+
+    directory = os.path.dirname(__file__)
+    path = r'{}/'.format(directory)
+
+    today = date.today()
+    d1 = today.strftime("%d_%m_%Y")
+
+    with open(path + '/generated_enums_' + d1 + '.py', 'w') as file:
+        file.write(output_lines)
+
+def generate_minimal():
+    """ Turns mavlink's common.xml enums into python functions to initiate
+    """
+
+    output_line = ''
+    output_lines = 'import pandas as pd' + '\n' + 'from pymavlink import mavutil' + "\n\n"
+    enum_name = ''
+    
+    url = 'https://raw.githubusercontent.com/mavlink/mavlink/master/message_definitions/v1.0/minimal.xml'
+    response = urllib.request.urlopen(url)
+    tree = ET.parse(response)
+
+    root = tree.getroot()
+
+    for enums in root.iter('enums'):
+        for enum in enums.iter('enum'):
+            # enum_category = enum.get('name')
+            # enum_description = enum.get('description').text
+
+            for entry in enum.iter('entry'):
+                enum_name = entry.get('name')
+                output_line = enum_name.lower().replace("mav_", "") + ' = mavutil.mavlink.' + enum_name + '\n'
+                 
+                possible_entries = ''
+                deprecated = entry.find('deprecated')
+                deprecation_comment = ''
+
+                if deprecated is not None:
+                    for deprecta in entry.iter('deprecated'):
+                        deprecation_comment = '# Deprecated since ' + deprecta.get('since') + \
+                            ' and replaced by ' + deprecta.get('replaced_by')  + '\n'
+
+                    if deprecta.get('description') is not None:
+                        deprecation_comment += '# Deprecation description ' + deprecta.get('description').text + '\n'
+
+                value = entry.get('value')
+                
+                if entry.find('description') is None:
+                    description = ''
+                else:
+                    description = enum_name.lower().replace("mav_", "") + '_description = "' + entry.find('description').text +'"'
+
+                    if description is None:
+                        description = ''
+                       
+                possible_entries += enum_name.lower().replace("mav_", "") + '_value = ' + str(value) + '\n' + description + '\n'
+
+                output_line = output_line + deprecation_comment + \
+                        possible_entries + '\n'
+                    
+                output_lines += output_line
+
+    directory = os.path.dirname(__file__)
+    path = r'{}/'.format(directory)
+
+    today = date.today()
+    d1 = today.strftime("%d_%m_%Y")
+
+    with open(path + '/generated_minimal_' + d1 + '.py', 'w') as file:
+        file.write(output_lines)
+    pass
+
 def update_mavlink_msg_cmd():
-    generate_messages()
-    generate_commands()
+    # generate_messages()
+    # generate_commands()
+    # generate_enums_init()
+    generate_minimal()
 
 if __name__ == "__main__":
     update_mavlink_msg_cmd()

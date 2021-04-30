@@ -1582,24 +1582,6 @@ def mav_cmd_set_message_interval(message_id, interval, response_target):
 
 	return cmd
 
-def mav_cmd_request_message(message_id, req_param_1, req_param_2, req_param_3, req_param_4, req_param_5, response_target):
-	""" Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
-	"""
-
-	cmd = Command(
-		0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-		mavutil.mavlink.MAV_CMD_REQUEST_MESSAGE,
-		0, 0,
-		message_id, # The MAVLink message ID of the requested message.
-		req_param_1, # Use for index ID, if required. Otherwise, the use of this parameter (if any) must be defined in the requested message. By default assumed not used (0).
-		req_param_2, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
-		req_param_3, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
-		req_param_4, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
-		req_param_5, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
-		response_target) # Target address for requested message (if message has target address fields). 0: Flight-stack default, 1: address of requestor, 2: broadcast.
-
-	return cmd
-
 def mav_cmd_request_protocol_version(protocol):
 	""" Deprecated since 2019-08 and replaced by MAV_CMD_REQUEST_MESSAGE
 		Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message
@@ -2768,5 +2750,23 @@ def mav_cmd_user_5():
 		0,
 		0,
 		0)
+
+	return cmd
+
+def mav_cmd_request_message(message_id, req_param_1, req_param_2, req_param_3, req_param_4, req_param_5, response_target):
+	""" Request the target system(s) emit a single instance of a specified message (i.e. a "one-shot" version of MAV_CMD_SET_MESSAGE_INTERVAL).
+	"""
+	
+	cmd = Command(
+		0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+		mavutil.mavlink.MAV_CMD_REQUEST_MESSAGE,
+		0, 0,
+		message_id, # The MAVLink message ID of the requested message.
+		req_param_1, # Use for index ID, if required. Otherwise, the use of this parameter (if any) must be defined in the requested message. By default assumed not used (0).
+		req_param_2, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
+		req_param_3, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
+		req_param_4, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
+		req_param_5, # The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).
+		response_target) # Target address for requested message (if message has target address fields). 0: Flight-stack default, 1: address of requestor, 2: broadcast.
 
 	return cmd

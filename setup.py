@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name="pathfinder_engine",
     version="0.0.1",
-    description="Pathfinder Engine",
+    description="PathFinder Engine",
     author="Pierre-Antoine Perrier",
     author_email="pierreantoineperrier@gmail.com",
     packages=find_packages(),
