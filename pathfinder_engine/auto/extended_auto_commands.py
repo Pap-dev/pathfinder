@@ -814,7 +814,7 @@ class AutoModeCommands():
 
 		return cmd
 
-	def mav_cmd_do_pause_continue(continue):
+	def mav_cmd_do_pause_continue(continue_bool):
 		""" If in a GPS controlled position mode, hold the current position or continue.
 		"""
 
@@ -822,7 +822,7 @@ class AutoModeCommands():
 			0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
 			mavutil.mavlink.MAV_CMD_DO_PAUSE_CONTINUE,
 			0, 0,
-			continue, # 0: Pause current mission or reposition command, hold current position. 1: Continue mission. A VTOL capable vehicle should enter hover mode (multicopter and VTOL planes). A plane should loiter with the default loiter radius.
+			continue_bool, # 0: Pause current mission or reposition command, hold current position. 1: Continue mission. A VTOL capable vehicle should enter hover mode (multicopter and VTOL planes). A plane should loiter with the default loiter radius.
 			0,
 			0,
 			0,
@@ -1411,7 +1411,7 @@ class AutoModeCommands():
 
 		return cmd
 
-	def mav_cmd_override_goto(continue, position, frame, yaw, latitude_x, longitude_y, altitude_z):
+	def mav_cmd_override_goto(continue_bool, position, frame, yaw, latitude_x, longitude_y, altitude_z):
 		""" Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position.
 		"""
 
@@ -1419,7 +1419,7 @@ class AutoModeCommands():
 			0, 0, 0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
 			mavutil.mavlink.MAV_CMD_OVERRIDE_GOTO,
 			0, 0,
-			continue, # MAV_GOTO_DO_HOLD: pause mission and either hold or move to specified position (depending on param2), MAV_GOTO_DO_CONTINUE: resume mission.
+			continue_bool, # MAV_GOTO_DO_HOLD: pause mission and either hold or move to specified position (depending on param2), MAV_GOTO_DO_CONTINUE: resume mission.
 			position, # MAV_GOTO_HOLD_AT_CURRENT_POSITION: hold at current position, MAV_GOTO_HOLD_AT_SPECIFIED_POSITION: hold at specified position.
 			frame, # Coordinate frame of hold point.
 			yaw, # Desired yaw angle.

@@ -47,7 +47,7 @@ class SendMessages():
     SAFETY_SET_ALLOWED_AREA = 54 # Set a safety zone (volume), which is defined by two corners of a cube. This message can be used to tell the MAV which setpoints/waypoints to accept and which to reject. Safety areas are often enforced by national or competition regulations.
     SAFETY_ALLOWED_AREA = 55 # Read out the safety zone the MAV currently assumes.
     ATTITUDE_QUATERNION_COV = 61 # The attitude in the aeronautical frame (right-handed, Z-down, X-front, Y-right), expressed as quaternion. Quaternion order is w, x, y, z and a zero rotation would be expressed as (1 0 0 0).
-    NAV_CONTROLLER_OUTPUT = 62 # The state of the fixed wing navigation and position controller.
+    NAV_CONTROLLER_OUTPUT = 62 # The state of the navigation and position controller.
     GLOBAL_POSITION_INT_COV = 63 # The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It  is designed as scaled integer message since the resolution of float is not sufficient. NOTE: This message is intended for onboard networks / companion computers and higher-bandwidth links and optimized for accuracy and completeness. Please use the GLOBAL_POSITION_INT message for a minimal subset.
     LOCAL_POSITION_NED_COV = 64 # The filtered local position (e.g. fused computer vision and accelerometers). Coordinate frame is right-handed, Z-axis down (aeronautical frame, NED / north-east-down convention)
     RC_CHANNELS = 65 # The PPM values of the RC channels received. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%.  A value of UINT16_MAX implies the channel is unused. Individual receivers/transmitters might violate this specification.
@@ -57,7 +57,7 @@ class SendMessages():
     RC_CHANNELS_OVERRIDE = 70 # The RAW values of the RC channels sent to the MAV to override info received from the RC radio. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%. Individual receivers/transmitters might violate this specification.  Note carefully the semantic differences between the first 8 channels and the subsequent channels
     MISSION_ITEM_INT = 73 # Message encoding a mission item. This message is emitted to announce                 the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.
     VFR_HUD = 74 # Metrics typically displayed on a HUD for fixed wing aircraft.
-    COMMAND_INT = 75 # Message encoding a command with parameters as scaled integers. Scaling depends on the actual command value. The command microservice is documented at https://mavlink.io/en/services/command.html
+    COMMAND_INT = 75 # Message encoding a command with parameters as scaled integers. Scaling depends on the actual command value. NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). The command microservice is documented at https://mavlink.io/en/services/command.html
     COMMAND_LONG = 76 # Send a command with up to seven parameters to the MAV. The command microservice is documented at https://mavlink.io/en/services/command.html
     COMMAND_ACK = 77 # Report status of a command. Includes feedback whether the command was executed. The command microservice is documented at https://mavlink.io/en/services/command.html
     COMMAND_CANCEL = 80 # Cancel a long running command. The target system should respond with a COMMAND_ACK to the original command with result=MAV_RESULT_CANCELLED if the long running process was cancelled. If it has already completed, the cancel action can be ignored. The cancel action can be retried until some sort of acknowledgement to the original command has been received. The command microservice is documented at https://mavlink.io/en/services/command.html
@@ -86,7 +86,7 @@ class SendMessages():
     FILE_TRANSFER_PROTOCOL = 110 # File transfer message
     TIMESYNC = 111 # Time synchronization message.
     CAMERA_TRIGGER = 112 # Camera-IMU triggering and synchronisation message.
-    HIL_GPS = 113 # The global position, as returned by the Global Positioning System (GPS). This is NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
+    HIL_GPS = 113 # The global position, as returned by the Global Positioning System (GPS). This is                  NOT the global position estimate of the sytem, but rather a RAW sensor value. See message GLOBAL_POSITION for the global position estimate.
     HIL_OPTICAL_FLOW = 114 # Simulated optical flow from a flow sensor (e.g. PX4FLOW or optical mouse sensor)
     HIL_STATE_QUATERNION = 115 # Sent from simulation to autopilot, avoids in contrast to HIL_STATE singularities. This packet is useful for high throughput applications such as hardware in the loop simulations.
     SCALED_IMU2 = 116 # The RAW IMU readings for secondary 9DOF sensor setup. This message should contain the scaled values to the described units
@@ -216,7 +216,7 @@ class SendMessages():
     OPEN_DRONE_ID_SYSTEM = 12904 # Data for filling the OpenDroneID System message. The System Message contains general system information including the operator location and possible aircraft group information.
     OPEN_DRONE_ID_OPERATOR_ID = 12905 # Data for filling the OpenDroneID Operator ID message, which contains the CAA (Civil Aviation Authority) issued operator ID.
     OPEN_DRONE_ID_MESSAGE_PACK = 12915 # An OpenDroneID message pack is a container for multiple encoded OpenDroneID messages (i.e. not in the format given for the above messages descriptions but after encoding into the compressed OpenDroneID byte format). Used e.g. when transmitting on Bluetooth 5.0 Long Range/Extended Advertising or on WiFi Neighbor Aware Networking.
-
+    
     def send_message(message_id):
         commands = AutoModeCommands()
         commands.mav_cmd_request_message(message_id, 0, 0, 0, 0, 0, 0)

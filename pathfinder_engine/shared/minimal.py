@@ -228,6 +228,10 @@ type_battery = mavutil.mavlink.MAV_TYPE_BATTERY
 type_battery_value = 36
 type_battery_description = "Battery"
 
+type_parachute = mavutil.mavlink.MAV_TYPE_PARACHUTE
+type_parachute_value = 37
+type_parachute_description = "Parachute"
+
 mode_flag_safety_armed = mavutil.mavlink.MAV_MODE_FLAG_SAFETY_ARMED
 mode_flag_safety_armed_value = 128
 mode_flag_safety_armed_description = "0b10000000 MAV safety set to armed. Motors are enabled / running / can start. Ready to fly. Additional note: this flag is to be ignore when sent in the command MAV_CMD_DO_SET_MODE and MAV_CMD_COMPONENT_ARM_DISARM shall be used instead. The flag can still be used to report the armed state."
@@ -745,6 +749,10 @@ comp_id_flarm = mavutil.mavlink.MAV_COMP_ID_FLARM
 comp_id_flarm_value = 160
 comp_id_flarm_description = "FLARM collision alert component."
 
+comp_id_parachute = mavutil.mavlink.MAV_COMP_ID_PARACHUTE
+comp_id_parachute_value = 161
+comp_id_parachute_description = "Parachute component."
+
 comp_id_gimbal2 = mavutil.mavlink.MAV_COMP_ID_GIMBAL2
 comp_id_gimbal2_value = 171
 comp_id_gimbal2_description = "Gimbal #2."
@@ -780,6 +788,18 @@ comp_id_missionplanner_description = "Component that can generate/supply a missi
 comp_id_onboard_computer = mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER
 comp_id_onboard_computer_value = 191
 comp_id_onboard_computer_description = "Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on."
+
+comp_id_onboard_computer2 = mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER2
+comp_id_onboard_computer2_value = 192
+comp_id_onboard_computer2_description = "Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on."
+
+comp_id_onboard_computer3 = mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER3
+comp_id_onboard_computer3_value = 193
+comp_id_onboard_computer3_description = "Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on."
+
+comp_id_onboard_computer4 = mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER4
+comp_id_onboard_computer4_value = 194
+comp_id_onboard_computer4_description = "Component that lives on the onboard computer (companion computer) and has some generic functionalities, such as settings system parameters and monitoring the status of some processes that don't directly speak mavlink and so on."
 
 comp_id_pathplanner = mavutil.mavlink.MAV_COMP_ID_PATHPLANNER
 comp_id_pathplanner_value = 195

@@ -252,21 +252,21 @@ def mav_cmd_do_follow_reposition(self, camera_q1, camera_q2, camera_q3, camera_q
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_do_orbit(self, radius, velocity, yaw_behavior, latitude_x, longitude_y, altitude_z):
-	""" Start orbiting on the circumference of a circle defined by the parameters. Setting any value NaN results in using defaults.
+def mav_cmd_do_orbit(self, radius, velocity, yaw_behavior, orbits, latitude_x, longitude_y, altitude_z):
+	""" Start orbiting on the circumference of a circle defined by the parameters. Setting values to NaN/INT32_MAX (as appropriate) results in using defaults.
 	"""
 
 	msg = self.vehicle.message_factory.command_long_encode(
 		0, 0,
 		mavutil.mavlink.MAV_CMD_DO_ORBIT,
 		0,
-		radius, # Radius of the circle. positive: Orbit clockwise. negative: Orbit counter-clockwise.
-		velocity, # Tangential Velocity. NaN: Vehicle configuration default.
+		radius, # Radius of the circle. Positive: orbit clockwise. Negative: orbit counter-clockwise. NaN: Use vehicle default radius, or current radius if already orbiting.
+		velocity, # Tangential Velocity. NaN: Use vehicle default velocity, or current velocity if already orbiting.
 		yaw_behavior, # Yaw behavior of the vehicle.
-		0,
-		latitude_x, # Center point latitude (if no MAV_FRAME specified) / X coordinate according to MAV_FRAME. NaN: Use current vehicle position or current center if already orbiting.
-		longitude_y, # Center point longitude (if no MAV_FRAME specified) / Y coordinate according to MAV_FRAME. NaN: Use current vehicle position or current center if already orbiting.
-		altitude_z) # Center point altitude (MSL) (if no MAV_FRAME specified) / Z coordinate according to MAV_FRAME. NaN: Use current vehicle position or current center if already orbiting.
+		orbits, # Orbit around the centre point for this many radians (i.e. for a three-quarter orbit set 270*Pi/180). 0: Orbit forever. NaN: Use vehicle default, or current value if already orbiting.
+		latitude_x, # Center point latitude (if no MAV_FRAME specified) / X coordinate according to MAV_FRAME. INT32_MAX (or NaN if sent in COMMAND_LONG): Use current vehicle position, or current center if already orbiting.
+		longitude_y, # Center point longitude (if no MAV_FRAME specified) / Y coordinate according to MAV_FRAME. INT32_MAX (or NaN if sent in COMMAND_LONG): Use current vehicle position, or current center if already orbiting.
+		altitude_z) # Center point altitude (MSL) (if no MAV_FRAME specified) / Z coordinate according to MAV_FRAME. NaN: Use current vehicle altitude.
 
 	self.vehicle.send_mavlink(msg)
 
@@ -343,7 +343,7 @@ def mav_cmd_nav_vtol_takeoff(self, transition_heading, yaw_angle, latitude, long
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_nav_vtol_land(self, approach_altitude, yaw, latitude, longitude, ground_altitude):
+def mav_cmd_nav_vtol_land(self, land_options, approach_altitude, yaw, latitude, longitude, ground_altitude):
 	""" Land using VTOL mode
 	"""
 
@@ -351,7 +351,7 @@ def mav_cmd_nav_vtol_land(self, approach_altitude, yaw, latitude, longitude, gro
 		0, 0,
 		mavutil.mavlink.MAV_CMD_NAV_VTOL_LAND,
 		0,
-		0,
+		land_options, # Landing behaviour.
 		0,
 		approach_altitude, # Approach altitude (with the same reference as the Altitude field). NaN if unspecified.
 		yaw, # Yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).
@@ -811,15 +811,15 @@ def mav_cmd_do_reposition(self, speed, bitmask, yaw, latitude, longitude, altitu
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_do_pause_continue(self, continue):
+def mav_cmd_do_pause_continue(self, continue_bool):
 	""" If in a GPS controlled position mode, hold the current position or continue.
 	"""
 
 	msg = self.vehicle.message_factory.command_long_encode(
 		0, 0,
-		mavutil.mavlink.MAV_CMD_DO_PAUSE_CONTINUE,
+		mavutil.mavlink.MAV_CMD_DO_PAUSE_continue_bool,
 		0,
-		continue, # 0: Pause current mission or reposition command, hold current position. 1: Continue mission. A VTOL capable vehicle should enter hover mode (multicopter and VTOL planes). A plane should loiter with the default loiter radius.
+		continue_bool, # 0: Pause current mission or reposition command, hold current position. 1: Continue mission. A VTOL capable vehicle should enter hover mode (multicopter and VTOL planes). A plane should loiter with the default loiter radius.
 		0,
 		0,
 		0,
@@ -955,7 +955,7 @@ def mav_cmd_do_set_roi(self, roi_mode, wp_index, roi_index):
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_do_digicam_configure(self, mode, shutter_speed, aperture, iso, exposure, command_identity, engine_cutoff):
+def mav_cmd_do_digicam_configure(self, mode, shutter_speed, aperture, iso, exposure, command_identity, engine_cut_off):
 	""" Configure digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).
 	"""
 
@@ -969,7 +969,7 @@ def mav_cmd_do_digicam_configure(self, mode, shutter_speed, aperture, iso, expos
 		iso, # ISO number e.g. 80, 100, 200, Etc.
 		exposure, # Exposure type enumerator.
 		command_identity, # Command Identity.
-		engine_cutoff) # Main engine cut-off time before camera trigger. (0 means no cut-off)
+		engine_cut_off) # Main engine cut-off time before camera trigger. (0 means no cut-off)
 
 	self.vehicle.send_mavlink(msg)
 
@@ -1228,7 +1228,7 @@ def mav_cmd_do_guided_master(self, system_id, component_id):
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_do_guided_limits(self, timeout, min_altitude, max_altitude, horizontal_move_limit):
+def mav_cmd_do_guided_limits(self, timeout, min_altitude, max_altitude, horiz_move_limit):
 	""" Set limits for external control
 	"""
 
@@ -1239,7 +1239,7 @@ def mav_cmd_do_guided_limits(self, timeout, min_altitude, max_altitude, horizont
 		timeout, # Timeout - maximum time that external controller will be allowed to control vehicle. 0 means no timeout.
 		min_altitude, # Altitude (MSL) min - if vehicle moves below this alt, the command will be aborted and the mission will continue. 0 means no lower altitude limit.
 		max_altitude, # Altitude (MSL) max - if vehicle moves above this alt, the command will be aborted and the mission will continue. 0 means no upper altitude limit.
-		horizontal_move_limit, # Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.
+		horiz_move_limit, # Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.
 		0,
 		0,
 		0)
@@ -1260,6 +1260,7 @@ def mav_cmd_do_engine_control(self, start_engine, cold_start, height_delay):
 		0,
 		0,
 		0,
+		0,
 		0)
 
 	self.vehicle.send_mavlink(msg)
@@ -1273,6 +1274,7 @@ def mav_cmd_do_set_mission_current(self, number):
 		mavutil.mavlink.MAV_CMD_DO_SET_MISSION_CURRENT,
 		0,
 		number, # Mission sequence value to set
+		0,
 		0,
 		0,
 		0,
@@ -1408,7 +1410,7 @@ def mav_cmd_do_upgrade(self, component_id, reboot):
 
 	self.vehicle.send_mavlink(msg)
 
-def mav_cmd_override_goto(self, continue, position, frame, yaw, latitude_x, longitude_y, altitude_z):
+def mav_cmd_override_goto(self, continue_bool, position, frame, yaw, latitude_x, longitude_y, altitude_z):
 	""" Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position.
 	"""
 
@@ -1416,7 +1418,7 @@ def mav_cmd_override_goto(self, continue, position, frame, yaw, latitude_x, long
 		0, 0,
 		mavutil.mavlink.MAV_CMD_OVERRIDE_GOTO,
 		0,
-		continue, # MAV_GOTO_DO_HOLD: pause mission and either hold or move to specified position (depending on param2), MAV_GOTO_DO_CONTINUE: resume mission.
+		continue_bool, # MAV_GOTO_DO_HOLD: pause mission and either hold or move to specified position (depending on param2), MAV_GOTO_DO_CONTINUE: resume mission.
 		position, # MAV_GOTO_HOLD_AT_CURRENT_POSITION: hold at current position, MAV_GOTO_HOLD_AT_SPECIFIED_POSITION: hold at specified position.
 		frame, # Coordinate frame of hold point.
 		yaw, # Desired yaw angle.
@@ -1471,6 +1473,23 @@ def mav_cmd_component_arm_disarm(self, arm, force):
 		0,
 		arm, # 0: disarm, 1: arm
 		force, # 0: arm-disarm unless prevented by safety checks (i.e. when landed), 21196: force arming/disarming (e.g. allow arming to override preflight checks and disarming in flight)
+		0,
+		0,
+		0,
+		0)
+
+	self.vehicle.send_mavlink(msg)
+
+def mav_cmd_run_prearm_checks(self):
+	""" Instructs system to run pre-arm checks. This command should return MAV_RESULT_TEMPORARILY_REJECTED in the case the system is armed, otherwise MAV_RESULT_ACCEPTED. Note that the return value from executing this command does not indicate whether the vehicle is armable or not, just whether the system has successfully run/is currently running the checks.  The result of the checks is reflected in the SYS_STATUS message.
+	"""
+
+	msg = self.vehicle.message_factory.command_long_encode(
+		0, 0,
+		mavutil.mavlink.MAV_CMD_RUN_PREARM_CHECKS,
+		0,
+		0,
+		0,
 		0,
 		0,
 		0,
@@ -2281,7 +2300,7 @@ def mav_cmd_set_guided_submode_circle(self, radius, latitude, longitude):
 		latitude, # Target latitude of center of circle in CIRCLE_MODE
 		longitude, # Target longitude of center of circle in CIRCLE_MODE
 		0)
-
+		
 	self.vehicle.send_mavlink(msg)
 
 def mav_cmd_condition_gate(self, geometry, usealtitude, latitude, longitude, altitude):
@@ -2422,6 +2441,24 @@ def mav_cmd_uavcan_get_node_info(self):
 	msg = self.vehicle.message_factory.command_long_encode(
 		0, 0,
 		mavutil.mavlink.MAV_CMD_UAVCAN_GET_NODE_INFO,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0)
+
+	self.vehicle.send_mavlink(msg)
+
+def mav_cmd_do_adsb_out_ident(self):
+	""" Trigger the start of an ADSB-out IDENT. This should only be used when requested to do so by an Air Traffic Controller in controlled airspace. This starts the IDENT which is then typically held for 18 seconds by the hardware per the Mode A, C, and S transponder spec.
+	"""
+
+	msg = self.vehicle.message_factory.command_long_encode(
+		0, 0,
+		mavutil.mavlink.MAV_CMD_DO_ADSB_OUT_IDENT,
 		0,
 		0,
 		0,
