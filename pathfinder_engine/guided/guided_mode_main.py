@@ -1,6 +1,6 @@
 from dronekit import connect, VehicleMode
-from preflight import Check
-from guided_mode_controls import Controller
+from shared.preflight import Check
+from guided_mode_controls import VehicleCommands
 from dronekit import connect
 from inputs import get_gamepad
 
@@ -12,7 +12,6 @@ class GuidedMode(object):
         return all_keys
 
     def controller_inputs_manager(self, all_keys, preferences):
-
         if not bool(all_keys):
             all_keys = {
                 'precision_values' : {
@@ -58,26 +57,33 @@ class GuidedMode(object):
             events = get_gamepad()
 
             for event in events:
-                gcs_gamepad = Controller()
-                input_name, input_value, input_type = gcs_gamepad.get_gamepad_inputs(event)
+                gcs_gamepad = VehicleCommands()
+                input_name, input_value = gcs_gamepad.get_gamepad_inputs(event)
 
                 for nested_dict in all_keys.items():
                     nested_dict.update((key, input_value) for key in nested_dict.items() \
                         if key == input_name)
 
-                gcs_gamepad.send_inputs(all_keys, preferences)
+                landing_instruction =  int(all_keys.get('Key BTN_START 1')) + int(all_keys.get('Key BTN_SELECT'))
+                
+                if landing_instruction < 2:
+                    gcs_gamepad.send_inputs(all_keys, preferences)
+                else:
+                    landing_mode = preferences.get('landing_mode')
+                    gcs_gamepad.land(landing_mode)
 
     def run_guided_mode(self, gcs_credentials, connection_string, preferences):
+
+        print("Initializing controller...")
+        all_keys = self.identify_gamepad_type()
 
         print("Connecting to vehicle...")
         vehicle = connect(connection_string, wait_ready=True)
         vehicle.mode = VehicleMode("GUIDED")
 
         print("Running preflight checks...")
-        vehicle.run_check(gcs_credentials, connection_string)
+        preval = Check()
+        preval.run_check(gcs_credentials, connection_string)
 
-        print("Running preflight checks...")
-        all_keys = self.identify_gamepad_type()
-
-        print("Initiate")
+        print("Initiate.")
         vehicle.controller_inputs_manager(all_keys, preferences)

@@ -1,3 +1,9 @@
+"""
+All mavlink's MAV_CMD inserted in dronekit messages (message_factory) 
+https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
+https://dronekit-python.readthedocs.io/en/latest/automodule.html#dronekit.Vehicle.message_factory
+"""
+
 from pymavlink import mavutil
 
 def mav_cmd_nav_waypoint(self, hold, accept_radius, pass_radius, yaw, latitude, longitude, altitude):

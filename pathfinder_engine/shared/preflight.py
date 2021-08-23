@@ -112,4 +112,6 @@ class Check(object):
         except:
             print("Vehicle level calibration failed.")
             preflight_data["vehicle level calibration"] = False
+
+        return preflight_data
     

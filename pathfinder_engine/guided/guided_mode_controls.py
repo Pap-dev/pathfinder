@@ -1,8 +1,15 @@
+"""
+Most basic commands (taken from mavlink's MAV_CMD in common.xml)
+"""
+
 from pymavlink import mavutil
 import time
 import inputs
 
 class VehicleCommands(object):
+    JOYSTICK_ABSOLUTE_MAX = 32767
+    JOYSTICK_ABSOLUTE_MIN = -32768
+    TRIGGER_ABSOLUTE_MAX = 255
 
     def gripper_control(self, cargo_release):
         if cargo_release == 'release cargo':
@@ -162,6 +169,14 @@ class VehicleCommands(object):
 
         self.vehicle.send_mavlink(msg)
         
+        while True:
+            print(" Altitude: ", self.vehicle.location.global_relative_frame.alt)      
+            if self.vehicle.location.global_relative_frame.alt >= ground_level * 0.95:
+                print("Reached ground level.")
+                break
+
+            time.sleep(1)
+
     def mount_control(self, gimbal_pitch, gimbal_roll, gimbal_yaw):
         self.vehicle.gimbal.rotate(gimbal_pitch, gimbal_roll, gimbal_yaw)
 
@@ -188,18 +203,13 @@ class VehicleCommands(object):
 
         self.vehicle.send_mavlink(msg)
 
-
-class Controller():
-    JOYSTICK_ABSOLUTE_MAX = 32767
-    JOYSTICK_ABSOLUTE_MIN = -32768
-    TRIGGER_ABSOLUTE_MAX = 255
-
     def send_inputs(self, all_keys, preferences):
         self.send_directions(all_keys)
         self.send_yaw(all_keys)
         self.send_mount_controls(all_keys)
         self.send_cam_controls(all_keys, preferences)
         self.send_gripper_controls(all_keys)
+        self.send_delivery_controls(self, all_keys)
 
     def send_gripper_controls(self, all_keys):
         delivery_trigger = all_keys.get('altitude_values',{}).get('Absolute ABS_HAT0Y')  
@@ -229,14 +239,14 @@ class Controller():
 
         if preferences.get('camera_mode') == 'photo':
             self.send_photo_controls(trigger)
-            if trigger == 0:
+            if trigger != 0:
                 self.take_pictures(is_on = True)
             else:
                 self.take_pictures(is_on = False)
 
         if preferences.get('camera_mode') == 'video':
             self.send_photo_controls(trigger)   
-            if trigger == 0:
+            if trigger != 0:
                 self.video_capture(is_on = True)
             else:
                 self.video_capture(is_on = False)        
