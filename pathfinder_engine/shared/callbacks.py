@@ -1,6 +1,11 @@
 def wildcard_callback(self, attr_name, value):
     return attr_name, value
 
+def analyze_callbacks(self, vehicle_attributes):
+    callbacks_analysis = ""
+
+    return callbacks_analysis
+
 def run_callback_listener(self):
     vehicle_attributes = {
         'version' : '', 

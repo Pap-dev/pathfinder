@@ -3,7 +3,7 @@ from shared.preflight import Check
 from guided_mode_controls import VehicleCommands
 from dronekit import connect
 from inputs import get_gamepad
-from shared.callbacks import wildcard_callback
+from shared.callbacks import wildcard_callback, analyze_callbacks
 
 class GuidedMode(object):
 
@@ -92,7 +92,9 @@ class GuidedMode(object):
 
             alerts = self.analyze_callbacks(vehicle_attributes)
     
-            print(alerts, vehicle_attributes)
+            if len(alerts) > 0:
+                for alert in alerts:
+                    print(alert)
 
             for event in events:
                 
