@@ -865,4 +865,3 @@ comp_id_system_control = mavutil.mavlink.MAV_COMP_ID_SYSTEM_CONTROL
 # Deprecated since 2018-11 and replaced by MAV_COMP_ID_ALL
 comp_id_system_control_value = 250
 comp_id_system_control_description = "Component for handling system messages (e.g. to ARM, takeoff, etc.)."
-

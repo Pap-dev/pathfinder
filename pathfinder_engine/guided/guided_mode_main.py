@@ -3,6 +3,7 @@ from shared.preflight import Check
 from guided_mode_controls import VehicleCommands
 from dronekit import connect
 from inputs import get_gamepad
+from shared.callbacks import wildcard_callback
 
 class GuidedMode(object):
 
@@ -53,11 +54,48 @@ class GuidedMode(object):
                 'landing_mode': 'normal landing'
             } # default preferences
 
+        vehicle_attributes = {
+            'version' : '', 
+            'location.capabilities' : '', 
+            'location.global_frame' : '',
+            'location.global_relative_frame' : '', 
+            'location.local_frame' : '', 
+            'attitude' : '', 
+            'velocity' : '', 
+            'gps_0' : '', 
+            'gimbal' : '',
+            'battery' : '', 
+            'rangefinder' : '', 
+            'ekf_ok' : '', 
+            'last_heartbeat' : '', 
+            'home_location' : '', 
+            'system_status' : '', 
+            'heading' : '', 
+            'is_armable' : '', 
+            'airspeed' : '', 
+            'groundspeed' : '', 
+            'armed' : '', 
+            'mode' : ''
+        }   
+
         while 1:
             events = get_gamepad()
+            gcs_gamepad = VehicleCommands()
+            
+            attribute_name, value = self.vehicle.add_attribute_listener('*', wildcard_callback)
+
+            for attribute in list(vehicle_attributes):
+                if attribute != attribute_name:
+                    continue
+                
+                vehicle_attributes[attribute_name] = value
+
+            alerts = self.analyze_callbacks(vehicle_attributes)
+    
+            print(alerts, vehicle_attributes)
 
             for event in events:
-                gcs_gamepad = VehicleCommands()
+                
                 input_name, input_value = gcs_gamepad.get_gamepad_inputs(event)
 
                 for nested_dict in all_keys.items():
@@ -72,7 +110,7 @@ class GuidedMode(object):
                     landing_mode = preferences.get('landing_mode')
                     gcs_gamepad.land(landing_mode)
 
-    def run_guided_mode(self, gcs_credentials, connection_string, preferences):
+    def guided_mode_entrypoint(self, gcs_credentials, connection_string, preferences):
 
         print("Initializing controller...")
         all_keys = self.identify_gamepad_type()

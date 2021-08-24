@@ -203,14 +203,6 @@ class VehicleCommands(object):
 
         self.vehicle.send_mavlink(msg)
 
-    def send_inputs(self, all_keys, preferences):
-        self.send_directions(all_keys)
-        self.send_yaw(all_keys)
-        self.send_mount_controls(all_keys)
-        self.send_cam_controls(all_keys, preferences)
-        self.send_gripper_controls(all_keys)
-        self.send_delivery_controls(self, all_keys)
-
     def send_gripper_controls(self, all_keys):
         delivery_trigger = all_keys.get('altitude_values',{}).get('Absolute ABS_HAT0Y')  
         if delivery_trigger < 0:
@@ -325,3 +317,11 @@ class VehicleCommands(object):
         type = event.type
 
         return key, value, type
+
+    def send_inputs(self, all_keys, preferences):
+        self.send_directions(all_keys)
+        self.send_yaw(all_keys)
+        self.send_mount_controls(all_keys)
+        self.send_cam_controls(all_keys, preferences)
+        self.send_gripper_controls(all_keys)
+        self.send_delivery_controls(self, all_keys)
