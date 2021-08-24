@@ -125,3 +125,32 @@ class GuidedMode(object):
 
         print("Initiate.")
         vehicle.controller_inputs_manager(all_keys, preferences)
+
+    @staticmethod
+    def get_info():
+    
+        preferences = {
+            'camera_mode' : 'photo',
+            'parachute_setting' : 'enable auto-release',
+            'landing_mode': 'normal landing'
+        }
+
+        gcs_credentials = input("Pilot's credentials: ")
+        connection_string = input("UAV connection string: ")
+
+        camera_mode = input("Preferences - camera mode ? (photo/video)")
+        parachute_setting = input("Preferences - parachute settings ?")
+        landing_mode = input("Preferences - landing mode ?")
+
+        preferences('camera_mode') = camera_mode
+        preferences('parachute_setting') = parachute_setting
+        preferences('landing_mode') = landing_mode
+
+        return gcs_credentials, connection_string, preferences
+
+
+if __name__ == "__main__":
+
+    uav = GuidedMode()
+    gcs_credentials, connection_string, preferences = uav.get_info()
+    uav.guided_mode_entrypoint(gcs_credentials, connection_string, preferences)

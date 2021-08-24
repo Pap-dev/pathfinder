@@ -13,8 +13,10 @@ class VehicleCommands(object):
 
     def gripper_control(self, cargo_release):
         if cargo_release == 'release cargo':
+            print("Releasing cargo...")
             gripper_action = 0 
         elif cargo_release == 'grab cargo':
+            print("Grabbing cargo...")
             gripper_action = 1
 
         gripper_instance = 1
@@ -34,6 +36,7 @@ class VehicleCommands(object):
         if winch_action == 'relaxed':
             action_instance = 0
         elif winch_action == 'operate':
+            print("Operating winch.")
             action_instance = 2
 
         msg = self.vehicle.message_factory.command_long_encode(
@@ -78,6 +81,8 @@ class VehicleCommands(object):
                 status_frequency,
                 0, 0, 0, 0, 0)
 
+            print("Capturing video...")
+            
             self.vehicle.send_mavlink(msg)
             return
 
