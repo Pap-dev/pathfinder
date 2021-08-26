@@ -58,7 +58,12 @@ class AutoModeCommands():
 		return cmd
 
 	def mav_cmd_nav_loiter_time(time, heading_required, radius, xtrack_location, latitude, longitude, altitude):
-		""" Loiter at the specified latitude, longitude and altitude for a certain amount of time. Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint.
+		""" 
+		Loiter at the specified latitude, longitude and altitude for a certain amount of time. 
+		Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). 
+		Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. 
+		If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter 
+		circle once heading towards the next waypoint.
 		"""
 
 		cmd = Command(

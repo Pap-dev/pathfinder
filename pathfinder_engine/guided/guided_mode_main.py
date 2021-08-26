@@ -1,3 +1,5 @@
+import time
+
 from dronekit import connect, VehicleMode
 from shared.preflight import Check
 from guided_mode_controls import VehicleCommands
@@ -78,6 +80,8 @@ class GuidedMode(object):
             'mode' : ''
         }   
 
+        takeoff = False
+
         while 1:
             events = get_gamepad()
             gcs_gamepad = VehicleCommands()
@@ -96,6 +100,27 @@ class GuidedMode(object):
                 for alert in alerts:
                     print(alert)
 
+                    if alert == "Critical: Battery is under 5%":
+
+                        return_to_launch = input("Emergency message: Returning to launch point ? If not, the vehicle will land at current location. (y/n)")
+                        user_decision = False
+                        
+                        while not user_decision:
+                            if return_to_launch == "y":
+                                print("Returning to launch point.")
+                                user_decision = True
+                                gcs_gamepad.return_to_launch()
+                                
+                            elif return_to_launch == "n":
+                                print("Landing at current location.")
+                                user_decision = True
+                                landing_mode = preferences.get("preferences")
+                                gcs_gamepad.land(landing_mode)
+
+                            else:
+                                print("Invalid input!")
+                                continue
+
             for event in events:
                 
                 input_name, input_value = gcs_gamepad.get_gamepad_inputs(event)
@@ -104,16 +129,30 @@ class GuidedMode(object):
                     nested_dict.update((key, input_value) for key in nested_dict.items() \
                         if key == input_name)
 
-                landing_instruction =  int(all_keys.get('Key BTN_START 1')) + int(all_keys.get('Key BTN_SELECT'))
-                
-                if landing_instruction < 2:
-                    gcs_gamepad.send_inputs(all_keys, preferences)
+                if not takeoff: 
+                    print("Initiate takeoff. Maintain RB pressed to elevate UAV to desired altitude.")
+                    gcs_gamepad.enable_streaming(0)
+                    
+                    if all_keys.get("Key BTN_TR") != 0:
+                        takeoff = True
+                        print("Taking off...")
+                        gcs_gamepad.takeoff(1)
+
+                        while True:
+                            gcs_gamepad.direction(0, 0, 1)
+
+                    print("Takeoff successful!")
+
                 else:
-                    landing_mode = preferences.get('landing_mode')
-                    gcs_gamepad.land(landing_mode)
+                    landing_instruction =  int(all_keys.get('Key BTN_START 1')) + int(all_keys.get('Key BTN_SELECT'))
+                    
+                    if landing_instruction < 2:
+                        gcs_gamepad.send_inputs(all_keys, preferences)
+                    else:
+                        landing_mode = preferences.get('landing_mode')
+                        gcs_gamepad.land(landing_mode)
 
     def guided_mode_entrypoint(self, gcs_credentials, connection_string, preferences):
-
         print("Initializing controller...")
         all_keys = self.identify_gamepad_type()
 
@@ -125,12 +164,13 @@ class GuidedMode(object):
         preval = Check()
         preval.run_check(gcs_credentials, connection_string)
 
-        print("Initiate.")
+        print("Enabling streaming.")
+        vehicle.enable_streaming(0)
+
         vehicle.controller_inputs_manager(all_keys, preferences)
 
     @staticmethod
     def get_info():
-    
         preferences = {
             'camera_mode' : 'photo',
             'parachute_setting' : 'enable auto-release',
@@ -152,7 +192,6 @@ class GuidedMode(object):
 
 
 if __name__ == "__main__":
-
     uav = GuidedMode()
     gcs_credentials, connection_string, preferences = uav.get_info()
     uav.guided_mode_entrypoint(gcs_credentials, connection_string, preferences)

@@ -2,7 +2,16 @@ def wildcard_callback(self, attr_name, value):
     return attr_name, value
 
 def analyze_callbacks(self, vehicle_attributes):
-    callbacks_analysis = ""
+    callbacks_analysis = []
+
+    if vehicle_attributes('battery') == 0.19:
+        callbacks_analysis.append("Warning: Battery is under 20%")
+
+    if vehicle_attributes('battery') == 0.09:
+        callbacks_analysis.append("Warning: Battery is under 10%")
+
+    if vehicle_attributes('battery') == 0.04:
+        callbacks_analysis.append("Critical: Battery is under 5%")
 
     return callbacks_analysis
 

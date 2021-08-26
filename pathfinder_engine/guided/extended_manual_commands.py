@@ -2497,7 +2497,7 @@ def mav_cmd_payload_prepare_deploy(self, operation_mode, approach_vector, ground
 def mav_cmd_payload_control_deploy(self, operation_mode):
 	""" Control the payload deployment.
 	"""
-
+	
 	msg = self.vehicle.message_factory.command_long_encode(
 		0, 0,
 		mavutil.mavlink.MAV_CMD_PAYLOAD_CONTROL_DEPLOY,

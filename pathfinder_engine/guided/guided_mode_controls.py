@@ -226,6 +226,22 @@ class VehicleCommands(object):
         self.gripper_control(cargo_release)
         self.winch_control(2, winch_release_rate)
 
+    def payload_deployment(self, all_keys):
+
+        operation_mode = all_keys.get('trigger_values',{}).get('Absolute ABS_RZ')
+
+        if not bool(operation_mode):
+            return
+
+        print("Deploying payload...")
+    
+        msg = self.vehicle.message_factory.command_long_encode(
+            0, 0, mavutil.mavlink.MAV_CMD_PAYLOAD_CONTROL_DEPLOY, 0,
+            operation_mode, # Operation mode. 0: Abort deployment, continue normal mission. 1: switch to payload deployment mode. 100: delete first payload deployment request. 101: delete all payload deployment requests.
+            0, 0, 0, 0, 0, 0)
+
+        self.vehicle.send_mavlink(msg)
+        
     def send_cam_controls(self, all_keys, preferences):
         cam_off = all_keys.get('incremental_keys',{}).get('Absolute ABS_HAT0X') 
 
@@ -324,9 +340,10 @@ class VehicleCommands(object):
         return key, value, type
 
     def send_inputs(self, all_keys, preferences):
-        self.send_directions(all_keys)
-        self.send_yaw(all_keys)
         self.send_mount_controls(all_keys)
         self.send_cam_controls(all_keys, preferences)
+        self.send_directions(all_keys)
+        self.send_yaw(all_keys)
         self.send_gripper_controls(all_keys)
-        self.send_delivery_controls(self, all_keys)
+        self.send_delivery_controls(all_keys)
+        self.payload_deployment(all_keys)
